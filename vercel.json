@@ -1,27 +1,21 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/next"
-    }
-  ],
   "routes": [
     {
       "src": "/api/finance",
-      "dest": "/pages/api/finance.ts"
+      "dest": "/api/finance"
     },
     {
       "src": "/api/log-maintenance",
-      "dest": "/pages/api/log-maintenance.ts"
+      "dest": "/api/log-maintenance"
     },
     {
       "src": "/api/maintenance",
-      "dest": "/pages/api/maintenance.ts"
+      "dest": "/api/maintenance"
     },
     {
       "src": "/api/vote",
-      "dest": "/pages/api/vote.ts"
+      "dest": "/api/vote"
     }
   ],
   "regions": ["syd1"],
