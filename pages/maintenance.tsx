@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 
+// Define the component with TypeScript
 const Maintenance = () => {
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState<string>("");
   const router = useRouter();
 
-  const handleSubmit = async (event) => {
+  // Update event type to React.FormEvent<HTMLFormElement>
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const formData = new FormData(event.target);
+    const formData = new FormData(event.target as HTMLFormElement); // Ensure formData is cast correctly
     const response = await fetch("/api/log-maintenance", {
       method: "POST",
       body: JSON.stringify({
