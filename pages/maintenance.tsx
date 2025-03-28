@@ -1,16 +1,16 @@
-import { useState } from "react";
+import { useState, FormEvent } from "react";
 import { useRouter } from "next/router";
+import Header from '../components/Header'; // Import the Header component
 
-// Define the component with TypeScript
 const Maintenance = () => {
   const [message, setMessage] = useState<string>("");
   const router = useRouter();
 
-  // Update event type to React.FormEvent<HTMLFormElement>
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const formData = new FormData(event.target as HTMLFormElement); // Ensure formData is cast correctly
+
     const response = await fetch("/api/log-maintenance", {
       method: "POST",
       body: JSON.stringify({
@@ -34,6 +34,7 @@ const Maintenance = () => {
 
   return (
     <div>
+      <Header /> {/* Add the Header here */}
       <h1>Maintenance Request</h1>
       <form onSubmit={handleSubmit}>
         <label>

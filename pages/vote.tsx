@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Header from '../components/Header'; // Import the Header component
 
 export default function Vote() {
   const [votes, setVotes] = useState({ yes: 0, no: 0 });
@@ -9,6 +10,7 @@ export default function Vote() {
 
   return (
     <div>
+      <Header /> {/* Include the Header component */}
       <h1>Vote on Strata Issues</h1>
       <button onClick={() => handleVote('yes')}>Vote Yes</button>
       <button onClick={() => handleVote('no')}>Vote No</button>
