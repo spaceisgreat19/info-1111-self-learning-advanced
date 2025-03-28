@@ -1,5 +1,5 @@
-import Link from 'next/link';
-import Image from 'next/image';
+import Link from 'next/link'; // Import Link from next/link
+import Image from 'next/image'; // Import Image for optimized images
 
 export default function Home() {
   return (
