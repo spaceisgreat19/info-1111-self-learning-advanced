@@ -1,13 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-export default async function handler(req: NextRequest) {
-  if (req.method === 'POST') {
+export async function POST(req: NextRequest) {
+  try {
     const { apartment, issue } = await req.json();
+
+    if (!apartment || !issue) {
+      return NextResponse.json(
+        { message: 'Missing apartment or issue details.' },
+        { status: 400 }
+      );
+    }
 
     return NextResponse.json({
       message: `Maintenance issue for apartment ${apartment} regarding: ${issue} has been logged.`,
     });
-  } else {
-    return NextResponse.json({ message: 'Method Not Allowed' }, { status: 405 });
+  } catch (error) {
+    return NextResponse.json({ message: 'Invalid Request' }, { status: 400 });
   }
+}
+
+export function OPTIONS() {
+  return NextResponse.json({}, { status: 200 });
 }
