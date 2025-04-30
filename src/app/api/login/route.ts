@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@libsql/client';
 import bcrypt from 'bcryptjs';
-import cookie from 'cookie';
+import { serialize } from 'cookie';
 import crypto from 'crypto';
 
 const client = createClient({
@@ -27,6 +27,12 @@ export async function POST(request: NextRequest) {
     }
 
     const user = result.rows[0];
+
+  
+    if (!user.password) {
+      return NextResponse.json({ message: 'Password not found.' }, { status: 400 });
+    }
+
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
@@ -38,7 +44,7 @@ export async function POST(request: NextRequest) {
     const headers = new Headers();
     headers.append(
       'Set-Cookie',
-      cookie.serialize('session_token', sessionToken, {
+      serialize('session_token', sessionToken, {
         httpOnly: false,  // <-- FIXED THIS
         secure: process.env.NODE_ENV === 'production',
         maxAge: 60 * 60 * 24 * 7,

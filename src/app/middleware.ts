@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import cookie from 'cookie';
+import * as cookie from 'cookie';
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const cookies = cookie.parse(request.headers.get('cookie') || '');
   const sessionToken = cookies.session_token;
 
@@ -9,9 +9,6 @@ export function middleware(request: NextRequest) {
   if (!sessionToken) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
-
-  // Optionally, you can verify the session token with your database here
-  // For now, assume any session_token is valid
 
   return NextResponse.next();
 }

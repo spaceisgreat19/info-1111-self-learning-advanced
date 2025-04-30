@@ -15,7 +15,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: 'Missing username or password.' }, { status: 400 });
     }
 
-    // 🔥 Create the 'users' table if it doesn't exist yet
     await client.execute(`
       CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -24,7 +23,7 @@ export async function POST(request: NextRequest) {
       )
     `);
 
-    // Check if the username already exists
+   
     const existingUser = await client.execute({
       sql: 'SELECT * FROM users WHERE username = ?',
       args: [username],
@@ -34,10 +33,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: 'Username already taken.' }, { status: 400 });
     }
 
-    // Hash the password
+  
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Insert the new user into the database
+  
     await client.execute({
       sql: 'INSERT INTO users (username, password) VALUES (?, ?)',
       args: [username, hashedPassword],
