@@ -26,7 +26,13 @@ export async function GET() {
 
     // Fetch all votes from the 'votes' table
     const result = await client.execute('SELECT * FROM votes');
-    const votes = result.rows as Vote[];
+    
+    // Ensure correct typing by mapping rows to the Vote type
+    const votes: Vote[] = result.rows.map((row: any) => ({
+      id: row.id,
+      option: row.option,
+      userId: row.userId,
+    }));
 
     // Count the votes based on option
     const yesVotes = votes.filter(vote => vote.option === 'yes').length;
