@@ -7,7 +7,7 @@ import { isAuthenticated } from '../../lib/auth';
 
 export default function Finance() {
   const router = useRouter();
-  const [entries, setEntries] = useState([]);
+  const [entries, setEntries] = useState<{ description: string; amount: number }[]>([]); // Fixed the type here
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState('');
   const [loading, setLoading] = useState(true);
