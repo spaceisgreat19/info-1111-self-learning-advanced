@@ -26,7 +26,7 @@ export async function GET() {
 
     // Fetch all votes from the 'votes' table
     const result = await client.execute('SELECT * FROM votes');
-    const votes = result.rows as Vote[];
+    const votes = result.rows as unknown as Vote[]; // Cast to 'unknown' first
 
     // Count the votes based on option
     const yesVotes = votes.filter(vote => vote.option === 'yes').length;
