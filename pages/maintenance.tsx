@@ -1,21 +1,25 @@
 import { useState, FormEvent } from "react";
 import { useRouter } from "next/router";
-import Header from '../components/Header'; // Import the Header component
+import Header from '../components/Header'; 
 
 const Maintenance = () => {
   const [message, setMessage] = useState<string>("");
   const router = useRouter();
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const formData = new FormData(event.target as HTMLFormElement); // Ensure formData is cast correctly
+    const formData = new FormData(event.target as HTMLFormElement); 
+
+   
+    const apartment = formData.get("apartment") as string;
+    const issue = formData.get("issue") as string;
 
     const response = await fetch("/api/log-maintenance", {
       method: "POST",
       body: JSON.stringify({
-        apartment: formData.get("apartment"),
-        issue: formData.get("issue"),
+        apartment,
+        issue,
       }),
       headers: { "Content-Type": "application/json" },
     });

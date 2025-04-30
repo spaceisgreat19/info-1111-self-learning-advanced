@@ -1,8 +1,15 @@
 import { useEffect, useState } from 'react';
 import Header from '../components/Header';
 
+interface MaintenanceRequest {
+  id: number;
+  apartment: string;
+  issue: string;
+  completed: boolean;
+}
+
 const MaintenanceRequests = () => {
-  const [requests, setRequests] = useState<{ id: number; apartment: string; issue: string; completed: boolean }[]>([]);
+  const [requests, setRequests] = useState<MaintenanceRequest[]>([]);
   const [isClient, setIsClient] = useState(false);
   const [showCompleted, setShowCompleted] = useState<'all' | 'completed' | 'incomplete'>('all');
 
@@ -15,7 +22,7 @@ const MaintenanceRequests = () => {
       const fetchRequests = async () => {
         const response = await fetch('/api/log-maintenance');
         const data = await response.json();
-        setRequests(data.map((item: any) => ({
+        setRequests(data.map((item: MaintenanceRequest) => ({
           id: item.id,
           apartment: item.apartment,
           issue: item.issue,
