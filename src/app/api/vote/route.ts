@@ -6,9 +6,15 @@ const client = createClient({
   authToken: process.env.TURSO_AUTH_TOKEN!,
 });
 
+
+interface VoteRequestBody {
+  option: string;
+  userId: number;
+}
+
 export async function POST(request: NextRequest) {
   try {
-    const { option, userId } = await request.json();
+    const { option, userId }: VoteRequestBody = await request.json();
 
     if (!option || !userId) {
       return NextResponse.json({ message: 'Missing required fields.' }, { status: 400 });

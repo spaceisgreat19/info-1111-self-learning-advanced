@@ -24,6 +24,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         message: `Maintenance request for apartment ${apartment} regarding: ${issue} has been logged.`,
       });
     } catch (error) {
+      console.error("POST error:", error);
       return res.status(500).json({ message: "Failed to log maintenance request." });
     }
   }
@@ -36,6 +37,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       return res.status(200).json(result.rows);
     } catch (error) {
+      console.error("GET error:", error);
       return res.status(500).json({ message: "Failed to fetch maintenance requests." });
     }
   }
@@ -55,6 +57,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       return res.status(200).json({ message: 'Maintenance request updated.' });
     } catch (error) {
+      console.error("PUT error:", error);
       return res.status(500).json({ message: "Failed to update maintenance request." });
     }
   }

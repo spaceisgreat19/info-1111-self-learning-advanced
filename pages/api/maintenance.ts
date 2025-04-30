@@ -15,6 +15,7 @@ export async function POST(req: NextRequest) {
       message: `Maintenance issue for apartment ${apartment} regarding: ${issue} has been logged.`,
     });
   } catch (error) {
+    console.error('POST error:', error);
     return NextResponse.json({ message: 'Invalid Request' }, { status: 400 });
   }
 }

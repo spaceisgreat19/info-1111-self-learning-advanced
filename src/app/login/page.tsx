@@ -64,7 +64,7 @@ export default function Login() {
             </button>
           </form>
           <p className="text-center text-sm mt-4">
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
             <a href="http://localhost:3000/signup" className="text-blue-500 underline">
               Sign up here
             </a>
