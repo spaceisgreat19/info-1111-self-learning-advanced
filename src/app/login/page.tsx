@@ -65,7 +65,7 @@ export default function Login() {
           </form>
           <p className="text-center text-sm mt-4">
             Don&apos;t have an account?{' '}
-            <a href="http://localhost:3000/signup" className="text-blue-500 underline">
+            <a href="https://info-1111-self-learning-advanced-8r6ygp5fs.vercel.app/signup" className="text-blue-500 underline">
               Sign up here
             </a>
           </p>

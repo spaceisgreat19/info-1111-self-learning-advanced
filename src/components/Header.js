@@ -35,6 +35,11 @@ const Header = () => {
               Maintenance Requests
             </Link>
           </li>
+          <li style={{ margin: '0 15px', marginLeft: 'auto' }}>
+            <Link href="/login" style={{ color: '#fff', textDecoration: 'none' }}>
+              Login
+            </Link>
+          </li>
         </ul>
       </nav>
     </header>

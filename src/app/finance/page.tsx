@@ -40,8 +40,8 @@ export default function Finance() {
   if (!authenticated) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
-        <h1 className="text-3xl font-bold mb-4">Access Denied</h1>
-        <p className="mb-6">Please log in to access the Finance page.</p>
+        <h1 className="text-3xl font-bold mb-4" style={{ color: 'black' }}>Access Denied</h1>
+        <p className="mb-6" style={{ color: 'black' }}>Please log in to access the Finance page.</p>
         <button
           onClick={() => router.push('/login')}
           className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
