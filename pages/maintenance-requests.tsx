@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Header from '../components/Header';
 
+// Define the MaintenanceRequest type
 interface MaintenanceRequest {
   id: number;
   apartment: string;
@@ -20,32 +21,41 @@ const MaintenanceRequests = () => {
   useEffect(() => {
     if (isClient) {
       const fetchRequests = async () => {
-        const response = await fetch('/api/log-maintenance');
-        const data = await response.json();
-        setRequests(data.map((item: MaintenanceRequest) => ({
-          id: item.id,
-          apartment: item.apartment,
-          issue: item.issue,
-          completed: item.completed ?? false
-        })));
+        try {
+          const response = await fetch('/api/log-maintenance');
+          const data: MaintenanceRequest[] = await response.json();  // Explicitly define the type here
+          setRequests(data.map(item => ({
+            id: item.id,
+            apartment: item.apartment,
+            issue: item.issue,
+            completed: item.completed ?? false,
+          })));
+        } catch (error) {
+          console.error('Error fetching maintenance requests:', error);
+        }
       };
       fetchRequests();
     }
   }, [isClient]);
 
-  const toggleCompleted = async (index: number) => {
+  // Toggle the 'completed' status
+  const toggleCompleted = async (id: number) => {
     const updatedRequests = [...requests];
-    const request = updatedRequests[index];
-    request.completed = !request.completed;
-    setRequests(updatedRequests);
+    const request = updatedRequests.find(req => req.id === id);  // Use id to directly find the request
+    if (request) {
+      request.completed = !request.completed;
+      setRequests(updatedRequests);
 
-    await fetch('/api/log-maintenance', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: request.id, completed: request.completed })
-    });
+      // Send the updated status to the API
+      await fetch('/api/log-maintenance', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: request.id, completed: request.completed }),
+      });
+    }
   };
 
+  // Filter the requests based on the selected status
   const filteredRequests = requests.filter(request => {
     if (showCompleted === 'completed') return request.completed;
     if (showCompleted === 'incomplete') return !request.completed;
@@ -70,12 +80,12 @@ const MaintenanceRequests = () => {
         {filteredRequests.length === 0 ? (
           <p>No maintenance requests available.</p>
         ) : (
-          filteredRequests.map((request, index) => (
+          filteredRequests.map((request) => (
             <li key={request.id} style={{ marginBottom: '10px' }}>
               <input
                 type="checkbox"
                 checked={request.completed}
-                onChange={() => toggleCompleted(index)}
+                onChange={() => toggleCompleted(request.id)}  // Use id to toggle completion
                 style={{ marginRight: '10px' }}
               />
               <strong>{request.apartment}</strong>: {request.issue}
