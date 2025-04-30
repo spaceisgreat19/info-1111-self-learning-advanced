@@ -28,12 +28,11 @@ export async function POST(request: NextRequest) {
 
     const user = result.rows[0];
 
-  
     if (!user.password) {
       return NextResponse.json({ message: 'Password not found.' }, { status: 400 });
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await bcrypt.compare(password, String(user.password));
 
     if (!isPasswordValid) {
       return NextResponse.json({ message: 'Invalid credentials.' }, { status: 401 });
@@ -45,11 +44,11 @@ export async function POST(request: NextRequest) {
     headers.append(
       'Set-Cookie',
       serialize('session_token', sessionToken, {
-        httpOnly: false,  // <-- FIXED THIS
+        httpOnly: false,
         secure: process.env.NODE_ENV === 'production',
         maxAge: 60 * 60 * 24 * 7,
         path: '/',
-        sameSite: 'lax',   // <-- added sameSite
+        sameSite: 'lax',
       })
     );
 
