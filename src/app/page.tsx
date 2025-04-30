@@ -1,91 +1,67 @@
-import Link from 'next/link'; // Import Link from next/link
-import Image from 'next/image'; // Import Image for optimized images
+// src/app/page.tsx
+import React from 'react';
+import Header from '../components/Header'; // Import Header
+import Image from 'next/image'; // Import Image
 
 export default function Home() {
   return (
-    <div style={{ fontFamily: 'Arial, sans-serif', color: '#333' }}>
-      {/* Header code directly added with styling */}
-      <header style={{ backgroundColor: '#6c757d', padding: '15px 20px' }}>
-        <nav>
-          <ul style={{ listStyleType: 'none', margin: 0, padding: 0, display: 'flex', justifyContent: 'center' }}>
-            {/* Committee Link */}
-            <li style={{ marginRight: '20px' }}>
-              <Link href="/committee">
-                <span style={{ color: 'white', textDecoration: 'none', fontSize: '18px' }}>Committee</span>
-              </Link>
-            </li>
+    <>
+      <Header />
+      <main className="p-8 flex flex-col items-center">
+        {/* BIG TITLE */}
+        <h1 className="text-5xl font-bold mb-8 text-center">
+          Strata Management System
+        </h1>
 
-            {/* Finance Link */}
-            <li style={{ marginRight: '20px' }}>
-              <Link href="/finance">
-                <span style={{ color: 'white', textDecoration: 'none', fontSize: '18px' }}>Finance</span>
-              </Link>
-            </li>
+        {/* BUILDING INFORMATION */}
+        <section className="max-w-4xl text-left mb-12">
+          <h2 className="text-3xl font-bold mb-4">About Our Building</h2>
+          <p className="mb-4">
+            Welcome to our strata-managed apartment building located in the heart of New South Wales.
+            This building is managed in accordance with the <strong>Strata Schemes Management Act (2015)</strong>.
+          </p>
 
-            {/* Maintenance Link */}
-            <li style={{ marginRight: '20px' }}>
-              <Link href="/maintenance">
-                <span style={{ color: 'white', textDecoration: 'none', fontSize: '18px' }}>Maintenance</span>
-              </Link>
-            </li>
-
-            {/* Vote Link */}
-            <li style={{ marginRight: '20px' }}>
-              <Link href="/vote">
-                <span style={{ color: 'white', textDecoration: 'none', fontSize: '18px' }}>Vote</span>
-              </Link>
-            </li>
-
-            {/* Maintenance Requests Link */}
-            <li style={{ marginRight: '20px' }}>
-              <Link href="/maintenance-requests">
-                <span style={{ color: 'white', textDecoration: 'none', fontSize: '18px' }}>Maintenance Requests</span>
-              </Link>
-            </li>
+          <h3 className="text-2xl font-semibold mt-6 mb-2">Building Overview</h3>
+          <ul className="list-disc list-inside mb-4">
+            <li>Established: 2015</li>
+            <li>Number of Units: 45</li>
+            <li>Facilities: Swimming pool, gym, shared garden</li>
+            <li>Parking: Basement level parking for residents</li>
           </ul>
-        </nav>
-      </header>
 
-      {/* Main content section */}
-      <main style={{ padding: '20px', textAlign: 'center' }}>
-        <h1 style={{ fontSize: '36px', marginBottom: '20px' }}>Strata Management System</h1>
-        <p style={{ fontSize: '20px', marginBottom: '30px' }}>
-          Manage your apartment complex with ease.
-        </p>
+          <h3 className="text-2xl font-semibold mt-6 mb-2">Owner Responsibilities</h3>
+          <p className="mb-4">
+            Owners are part of the Owners Corporation and contribute to both the Administrative Fund and the Capital Works Fund.
+            These funds cover building maintenance, repairs, and insurance.
+          </p>
 
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '30px' }}>
-          <ul style={{ listStyleType: 'none', padding: 0, fontSize: '18px', textAlign: 'left' }}>
-            <li>Track maintenance requests</li>
-            <li>Manage committee members</li>
-            <li>View financial records</li>
-            <li>Vote on important matters</li>
-          </ul>
-        </div>
+          <h3 className="text-2xl font-semibold mt-6 mb-2">Contact</h3>
+          <p>
+            For any inquiries, please reach out to the Strata Committee at:{" "}
+            <a href="mailto:contact@stratabuilding.com" className="text-blue-500 underline">
+              contact@stratabuilding.com
+            </a>
+          </p>
+        </section>
 
-        {/* Images section */}
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '20px' }}>
+        {/* IMAGES BELOW */}
+        <div className="flex flex-wrap justify-center gap-8">
           <Image
             src="/strata_project.jpg"
             alt="Strata Project"
-            width={300}
-            height={200}
-            style={{
-              borderRadius: '8px',
-              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-            }}
+            width={400}
+            height={250}
+            className="rounded-lg shadow-lg"
           />
           <Image
             src="/strata.jpg"
-            alt="Strata Project"
-            width={300}
-            height={200}
-            style={{
-              borderRadius: '8px',
-              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-            }}
+            alt="Strata"
+            width={400}
+            height={250}
+            className="rounded-lg shadow-lg"
           />
         </div>
       </main>
-    </div>
+    </>
   );
 }
