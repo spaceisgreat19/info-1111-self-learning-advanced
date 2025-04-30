@@ -59,9 +59,9 @@ const MaintenanceRequests = () => {
   });
 
   return (
-    <div style={{ fontFamily: 'Arial, sans-serif', padding: '20px', backgroundColor: '#f4f7fc' }}>
+    <div style={{ fontFamily: 'Arial, sans-serif', backgroundColor: '#f4f7fc' }}>
       <Header />
-      <div style={{ maxWidth: '800px', margin: '0 auto', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', padding: '30px' }}>
+      <div style={{ maxWidth: '800px', margin: '20px auto', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', padding: '30px' }}>
         <h1 style={{ textAlign: 'center', fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '20px', color: '#333' }}>Maintenance Requests</h1>
 
         <div style={{ marginBottom: '20px' }}>
