@@ -2,7 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import Header from '../components/Header';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts';
 
 export default function Vote() {
   const [votes, setVotes] = useState<{ yes: number; no: number }>({ yes: 0, no: 0 });
@@ -53,11 +61,30 @@ export default function Vote() {
   return (
     <div>
       <Header />
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', minHeight: '80vh', backgroundColor: '#f8f9fa', padding: '20px' }}>
-        <h1 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '20px', textAlign: 'center' }}>Vote on Strata Issues</h1>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'flex-start',
+          minHeight: '80vh',
+          backgroundColor: '#f8f9fa',
+          padding: '20px',
+        }}
+      >
+        <h1
+          style={{
+            fontSize: '2rem',
+            fontWeight: 'bold',
+            marginBottom: '20px',
+            textAlign: 'center',
+          }}
+        >
+          Vote on Strata Issues
+        </h1>
 
         <div style={{ width: '100%', maxWidth: '800px', marginBottom: '20px' }}>
-          <ResponsiveContainer width="100%" height={400}> {/* Increased height */}
+          <ResponsiveContainer width="100%" height={400}>
             <BarChart data={data}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
@@ -68,12 +95,30 @@ export default function Vote() {
           </ResponsiveContainer>
         </div>
 
-        <div style={{ width: '100%', maxWidth: '600px', textAlign: 'center', marginBottom: '20px' }}>
-          <p style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '10px' }}>✅ Yes: {votes.yes}</p>
-          <p style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>❌ No: {votes.no}</p>
+        <div
+          style={{
+            width: '100%',
+            maxWidth: '600px',
+            textAlign: 'center',
+            marginBottom: '20px',
+          }}
+        >
+          <p style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '10px' }}>
+            Yes: {votes.yes}
+          </p>
+          <p style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>
+            No: {votes.no}
+          </p>
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'space-around', width: '100%', maxWidth: '600px' }}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-around',
+            width: '100%',
+            maxWidth: '600px',
+          }}
+        >
           <button
             onClick={() => handleVote('yes')}
             style={{
@@ -87,8 +132,8 @@ export default function Vote() {
               transition: 'background-color 0.3s ease',
               width: '45%',
             }}
-            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#45a049'}
-            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#4CAF50'}
+            onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#45a049')}
+            onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#4CAF50')}
           >
             Vote Yes
           </button>
@@ -105,8 +150,8 @@ export default function Vote() {
               transition: 'background-color 0.3s ease',
               width: '45%',
             }}
-            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#e53935'}
-            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f44336'}
+            onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#e53935')}
+            onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#f44336')}
           >
             Vote No
           </button>
