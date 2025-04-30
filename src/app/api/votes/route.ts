@@ -6,6 +6,13 @@ const client = createClient({
   authToken: process.env.TURSO_AUTH_TOKEN!,
 });
 
+// Define the expected structure of a vote
+type Vote = {
+  id: number;
+  option: string;
+  userId: number;
+};
+
 export async function GET() {
   try {
     // Create the table if it doesn't exist
@@ -19,19 +26,13 @@ export async function GET() {
 
     // Fetch all votes from the 'votes' table
     const result = await client.execute('SELECT * FROM votes');
-    const votes = result.rows as any[];
+    const votes = result.rows as Vote[];
 
     // Count the votes based on option
     const yesVotes = votes.filter(vote => vote.option === 'yes').length;
     const noVotes = votes.filter(vote => vote.option === 'no').length;
 
-    // Convert BigInt to regular number for response
-    const response = {
-      yes: yesVotes,
-      no: noVotes
-    };
-
-    return NextResponse.json(response, { status: 200 });
+    return NextResponse.json({ yes: yesVotes, no: noVotes }, { status: 200 });
   } catch (error) {
     console.error('Error fetching votes:', error);
     return NextResponse.json({ message: 'Error fetching votes.' }, { status: 500 });
