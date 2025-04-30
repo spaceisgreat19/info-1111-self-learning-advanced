@@ -6,7 +6,6 @@ const client = createClient({
   authToken: process.env.TURSO_AUTH_TOKEN!,
 });
 
-// Define the expected structure of a vote
 type Vote = {
   id: number;
   option: string;
@@ -15,7 +14,6 @@ type Vote = {
 
 export async function GET() {
   try {
-    // Create the table if it doesn't exist
     await client.execute(`
       CREATE TABLE IF NOT EXISTS votes (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -24,11 +22,9 @@ export async function GET() {
       )
     `);
 
-    // Fetch all votes from the 'votes' table
     const result = await client.execute('SELECT * FROM votes');
-    const votes = result.rows as unknown as Vote[]; // Cast to 'unknown' first
+    const votes = result.rows as unknown as Vote[];
 
-    // Count the votes based on option
     const yesVotes = votes.filter(vote => vote.option === 'yes').length;
     const noVotes = votes.filter(vote => vote.option === 'no').length;
 
