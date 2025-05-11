@@ -55,7 +55,7 @@ export default function Finance() {
   return (
     <div className="font-sans p-5">
       <Header />
-      <h1 className="text-4xl font-bold text-center mt-10 mb-6">Finance & Budget Tracking</h1>
+      <h1 className="text-4xl font-bold text-center mt-6 mb-6">Finance & Budget Tracking</h1>
 
       <div className="max-w-lg mx-auto">
         <div className="mb-4">

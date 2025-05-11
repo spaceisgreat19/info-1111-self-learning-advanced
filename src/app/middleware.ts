@@ -14,5 +14,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/protected-page', '/vote'], // List the routes you want to protect here
+  matcher: ['/protected-page', '/vote'], 
 };
