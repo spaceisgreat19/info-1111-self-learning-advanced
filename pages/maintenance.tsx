@@ -12,16 +12,18 @@ const Maintenance = () => {
     const formData = new FormData(event.target as HTMLFormElement);
     const apartment = formData.get("apartment") as string;
     const issue = formData.get("issue") as string;
+    const date = formData.get("date") as string;
+    const priority = formData.get("priority") as string;
 
-    if (!apartment || !issue) {
-      setMessage("Both apartment and issue are required.");
+    if (!apartment || !issue || !date || !priority) {
+      setMessage("All fields are required.");
       return;
     }
 
     try {
       const response = await fetch("/api/log-maintenance", {
         method: "POST",
-        body: JSON.stringify({ apartment, issue }),
+        body: JSON.stringify({ apartment, issue, date, priority }),
         headers: { "Content-Type": "application/json" },
       });
 
@@ -48,9 +50,9 @@ const Maintenance = () => {
         style={{
           display: "flex",
           justifyContent: "center",
-          alignItems: "flex-start",  // Keep content at the top of the page
+          alignItems: "flex-start",
           minHeight: "100vh",
-          padding: "30px 20px",  // Add some padding around the container
+          padding: "30px 20px",
           backgroundColor: "#f8f9fa",
         }}
       >
@@ -62,7 +64,7 @@ const Maintenance = () => {
             boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
             width: "100%",
             maxWidth: "500px",
-            marginTop: "50px",  // Push the form a bit higher
+            marginTop: "50px",
           }}
         >
           <h1
@@ -77,14 +79,7 @@ const Maintenance = () => {
           </h1>
           <form onSubmit={handleSubmit}>
             <div style={{ marginBottom: "15px" }}>
-              <label
-                style={{
-                  fontSize: "1rem",
-                  fontWeight: "600",
-                  display: "block",
-                  marginBottom: "5px",
-                }}
-              >
+              <label style={{ fontSize: "1rem", fontWeight: "600", display: "block", marginBottom: "5px" }}>
                 Apartment
               </label>
               <input
@@ -101,14 +96,7 @@ const Maintenance = () => {
               />
             </div>
             <div style={{ marginBottom: "15px" }}>
-              <label
-                style={{
-                  fontSize: "1rem",
-                  fontWeight: "600",
-                  display: "block",
-                  marginBottom: "5px",
-                }}
-              >
+              <label style={{ fontSize: "1rem", fontWeight: "600", display: "block", marginBottom: "5px" }}>
                 Issue
               </label>
               <input
@@ -123,6 +111,44 @@ const Maintenance = () => {
                   border: "1px solid #ccc",
                 }}
               />
+            </div>
+            <div style={{ marginBottom: "15px" }}>
+              <label style={{ fontSize: "1rem", fontWeight: "600", display: "block", marginBottom: "5px" }}>
+                Date
+              </label>
+              <input
+                type="date"
+                name="date"
+                required
+                style={{
+                  width: "100%",
+                  padding: "10px",
+                  fontSize: "1rem",
+                  borderRadius: "8px",
+                  border: "1px solid #ccc",
+                }}
+              />
+            </div>
+            <div style={{ marginBottom: "15px" }}>
+              <label style={{ fontSize: "1rem", fontWeight: "600", display: "block", marginBottom: "5px" }}>
+                Priority
+              </label>
+              <select
+                name="priority"
+                required
+                defaultValue="medium"
+                style={{
+                  width: "100%",
+                  padding: "10px",
+                  fontSize: "1rem",
+                  borderRadius: "8px",
+                  border: "1px solid #ccc",
+                }}
+              >
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+              </select>
             </div>
             <button
               type="submit"
