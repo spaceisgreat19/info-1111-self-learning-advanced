@@ -4,10 +4,15 @@ import Header from "../components/Header";
 
 const Maintenance = () => {
   const [message, setMessage] = useState<string>("");
+  const [error, setError] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setLoading(true);
+    setMessage("");
+    setError(false);
 
     const formData = new FormData(event.target as HTMLFormElement);
     const apartment = formData.get("apartment") as string;
@@ -16,7 +21,9 @@ const Maintenance = () => {
     const priority = formData.get("priority") as string;
 
     if (!apartment || !issue || !date || !priority) {
+      setError(true);
       setMessage("All fields are required.");
+      setLoading(false);
       return;
     }
 
@@ -31,16 +38,18 @@ const Maintenance = () => {
 
       if (response.ok) {
         setMessage("Maintenance request submitted successfully!");
-        setTimeout(() => {
-          router.push("/thank-you");
-        }, 2000);
+        setTimeout(() => router.push("/thank-you"), 2000);
       } else {
+        setError(true);
         setMessage(data.message || "Something went wrong, please try again.");
       }
     } catch (error) {
+      console.error("Error submitting request:", error);
+      setError(true);
       setMessage("An error occurred. Please try again.");
-      console.error("Error submitting maintenance request:", error);
     }
+
+    setLoading(false);
   };
 
   return (
@@ -79,7 +88,7 @@ const Maintenance = () => {
           </h1>
           <form onSubmit={handleSubmit}>
             <div style={{ marginBottom: "15px" }}>
-              <label style={{ fontSize: "1rem", fontWeight: "600", display: "block", marginBottom: "5px" }}>
+              <label style={{ fontWeight: "600", display: "block", marginBottom: "5px" }}>
                 Apartment
               </label>
               <input
@@ -89,14 +98,13 @@ const Maintenance = () => {
                 style={{
                   width: "100%",
                   padding: "10px",
-                  fontSize: "1rem",
                   borderRadius: "8px",
                   border: "1px solid #ccc",
                 }}
               />
             </div>
             <div style={{ marginBottom: "15px" }}>
-              <label style={{ fontSize: "1rem", fontWeight: "600", display: "block", marginBottom: "5px" }}>
+              <label style={{ fontWeight: "600", display: "block", marginBottom: "5px" }}>
                 Issue
               </label>
               <input
@@ -106,14 +114,13 @@ const Maintenance = () => {
                 style={{
                   width: "100%",
                   padding: "10px",
-                  fontSize: "1rem",
                   borderRadius: "8px",
                   border: "1px solid #ccc",
                 }}
               />
             </div>
             <div style={{ marginBottom: "15px" }}>
-              <label style={{ fontSize: "1rem", fontWeight: "600", display: "block", marginBottom: "5px" }}>
+              <label style={{ fontWeight: "600", display: "block", marginBottom: "5px" }}>
                 Date
               </label>
               <input
@@ -123,14 +130,13 @@ const Maintenance = () => {
                 style={{
                   width: "100%",
                   padding: "10px",
-                  fontSize: "1rem",
                   borderRadius: "8px",
                   border: "1px solid #ccc",
                 }}
               />
             </div>
             <div style={{ marginBottom: "15px" }}>
-              <label style={{ fontSize: "1rem", fontWeight: "600", display: "block", marginBottom: "5px" }}>
+              <label style={{ fontWeight: "600", display: "block", marginBottom: "5px" }}>
                 Priority
               </label>
               <select
@@ -140,7 +146,6 @@ const Maintenance = () => {
                 style={{
                   width: "100%",
                   padding: "10px",
-                  fontSize: "1rem",
                   borderRadius: "8px",
                   border: "1px solid #ccc",
                 }}
@@ -152,18 +157,19 @@ const Maintenance = () => {
             </div>
             <button
               type="submit"
+              disabled={loading}
               style={{
                 width: "100%",
                 padding: "12px",
-                backgroundColor: "#0070f3",
+                backgroundColor: loading ? "#999" : "#0070f3",
                 color: "#fff",
                 border: "none",
                 borderRadius: "8px",
                 fontSize: "1rem",
-                cursor: "pointer",
+                cursor: loading ? "not-allowed" : "pointer",
               }}
             >
-              Submit
+              {loading ? "Submitting..." : "Submit"}
             </button>
           </form>
           {message && (
@@ -171,7 +177,7 @@ const Maintenance = () => {
               style={{
                 marginTop: "15px",
                 textAlign: "center",
-                color: "#4caf50",
+                color: error ? "#d32f2f" : "#4caf50",
                 fontWeight: "500",
               }}
             >

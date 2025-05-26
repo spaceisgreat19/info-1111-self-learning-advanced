@@ -81,7 +81,6 @@ const MaintenanceRequests = () => {
     return statusMatch && priorityMatch;
   });
 
-  // Sort filteredRequests by date
   filteredRequests.sort((a, b) => {
     const dateA = new Date(a.created_at).getTime();
     const dateB = new Date(b.created_at).getTime();

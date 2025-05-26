@@ -8,140 +8,127 @@ const client = createClient({
 
 const validPriorities = ['Low', 'Medium', 'High'];
 
-function normalizePriority(p: string): string {
-  if (!p) return 'Medium';
-  const cap = p.charAt(0).toUpperCase() + p.slice(1).toLowerCase();
-  return validPriorities.includes(cap) ? cap : 'Medium';
+function normalizePriority(p: any): string {
+  if (typeof p !== 'string') return 'Medium';
+  const formatted = p.charAt(0).toUpperCase() + p.slice(1).toLowerCase();
+  return validPriorities.includes(formatted) ? formatted : 'Medium';
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method === 'POST') {
-    let { apartment, issue, date, completed = false, priority = 'Medium' } = req.body;
+  try {
+    switch (req.method) {
+      case 'POST': {
+        const { apartment, issue, date, completed = false, priority = 'Medium' } = req.body;
 
-    priority = normalizePriority(priority);
-    completed = !!completed;
+        if (!apartment || !issue || !date) {
+          return res.status(400).json({ message: 'Apartment, issue, and date are required.' });
+        }
 
-    if (!apartment || !issue || !date) {
-      return res.status(400).json({ message: 'Apartment, issue, and date are required.' });
-    }
+        const normalizedPriority = normalizePriority(priority);
 
-    if (!validPriorities.includes(priority)) {
-      return res.status(400).json({ message: `Priority must be one of: ${validPriorities.join(', ')}` });
-    }
+        await client.execute({
+          sql: `INSERT INTO maintenance_requests (apartment, issue, completed, priority, created_at) VALUES (?, ?, ?, ?, ?)`,
+          args: [apartment, issue, completed ? 1 : 0, normalizedPriority, date]
+        });
 
-    try {
-      await client.execute({
-        sql: "INSERT INTO maintenance_requests (apartment, issue, completed, priority, created_at) VALUES (?, ?, ?, ?, ?)",
-        args: [apartment, issue, completed ? 1 : 0, priority, date]
-      });
-
-      return res.status(200).json({
-        message: `Maintenance request for apartment ${apartment} regarding: ${issue} has been logged.`,
-      });
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: "Failed to log maintenance request." });
-    }
-  }
-
-  if (req.method === 'GET') {
-    const { completed, priority, from, to, sort } = req.query;
-
-    let where = [];
-    let params: any[] = [];
-
-    if (completed === 'true' || completed === 'false') {
-      where.push(`completed = ?`);
-      params.push(completed === 'true' ? 1 : 0);
-    }
-
-    if (priority && typeof priority === 'string') {
-      const p = normalizePriority(priority);
-      if (validPriorities.includes(p)) {
-        where.push(`priority = ?`);
-        params.push(p);
+        return res.status(200).json({ message: `Request logged for apartment ${apartment}.` });
       }
-    }
 
-    if (from) {
-      where.push(`created_at >= ?`);
-      params.push(from);
-    }
+      case 'GET': {
+        const { completed, priority, from, to, sort } = req.query;
+        const conditions: string[] = [];
+        const params: any[] = [];
 
-    if (to) {
-      where.push(`created_at <= ?`);
-      params.push(to);
-    }
+        if (completed === 'true' || completed === 'false') {
+          conditions.push('completed = ?');
+          params.push(completed === 'true' ? 1 : 0);
+        }
 
-    let query = 'SELECT * FROM maintenance_requests';
-    if (where.length) {
-      query += ' WHERE ' + where.join(' AND ');
-    }
+        if (priority) {
+          const p = normalizePriority(priority);
+          conditions.push('priority = ?');
+          params.push(p);
+        }
 
-    switch (sort) {
-      case 'date_desc': query += ' ORDER BY created_at DESC'; break;
-      case 'date_asc': query += ' ORDER BY created_at ASC'; break;
-      case 'priority_asc': query += ' ORDER BY priority ASC'; break;
-      case 'priority_desc': query += ' ORDER BY priority DESC'; break;
-    }
+        if (from && typeof from === 'string' && !isNaN(Date.parse(from))) {
+          conditions.push('created_at >= ?');
+          params.push(from);
+        }
 
-    try {
-      const result = await client.execute({ sql: query, args: params });
-      return res.status(200).json(result.rows);
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: "Failed to fetch filtered requests." });
-    }
-  }
+        if (to && typeof to === 'string' && !isNaN(Date.parse(to))) {
+          conditions.push('created_at <= ?');
+          params.push(to);
+        }
 
-  if (req.method === 'PUT') {
-    const { id, completed, priority, date } = req.body;
+        let query = `SELECT * FROM maintenance_requests`;
+        if (conditions.length) {
+          query += ` WHERE ` + conditions.join(' AND ');
+        }
 
-    if (typeof id !== 'number') {
-      return res.status(400).json({ message: 'Invalid request. ID is required and must be a number.' });
-    }
+        const sortMap: Record<string, string> = {
+          'date_desc': 'created_at DESC',
+          'date_asc': 'created_at ASC',
+          'priority_asc': 'priority ASC',
+          'priority_desc': 'priority DESC'
+        };
 
-    let setClauses = [];
-    let args = [];
+        if (sort && sortMap[sort as string]) {
+          query += ` ORDER BY ${sortMap[sort as string]}`;
+        }
 
-    if (typeof completed === 'boolean') {
-      setClauses.push("completed = ?");
-      args.push(completed ? 1 : 0);
-    }
-
-    if (priority) {
-      const p = normalizePriority(priority);
-      if (!validPriorities.includes(p)) {
-        return res.status(400).json({ message: `Priority must be one of: ${validPriorities.join(', ')}` });
+        const result = await client.execute({ sql: query, args: params });
+        return res.status(200).json(result.rows);
       }
-      setClauses.push("priority = ?");
-      args.push(p);
-    }
 
-    if (date) {
-      setClauses.push("created_at = ?");
-      args.push(date);
-    }
+      case 'PUT': {
+        const { id, completed, priority, date } = req.body;
 
-    if (setClauses.length === 0) {
-      return res.status(400).json({ message: 'No fields to update.' });
-    }
+        if (typeof id !== 'number') {
+          return res.status(400).json({ message: 'ID is required and must be a number.' });
+        }
 
-    args.push(id);
-    const sql = `UPDATE maintenance_requests SET ${setClauses.join(", ")} WHERE id = ?`;
+        const updates: string[] = [];
+        const params: any[] = [];
 
-    try {
-      await client.execute({ sql, args });
-      return res.status(200).json({ message: 'Maintenance request updated.' });
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: "Failed to update maintenance request." });
+        if (typeof completed === 'boolean') {
+          updates.push('completed = ?');
+          params.push(completed ? 1 : 0);
+        }
+
+        if (priority) {
+          const p = normalizePriority(priority);
+          updates.push('priority = ?');
+          params.push(p);
+        }
+
+        if (date) {
+          updates.push('created_at = ?');
+          params.push(date);
+        }
+
+        if (!updates.length) {
+          return res.status(400).json({ message: 'No fields to update.' });
+        }
+
+        params.push(id);
+        const sql = `UPDATE maintenance_requests SET ${updates.join(', ')} WHERE id = ?`;
+
+        await client.execute({ sql, args: params });
+        return res.status(200).json({ message: 'Maintenance request updated.' });
+      }
+
+      case 'OPTIONS': {
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, OPTIONS');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+        return res.status(200).end();
+      }
+
+      default:
+        return res.status(405).json({ message: 'Method Not Allowed' });
     }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Internal Server Error', error: error instanceof Error ? error.message : String(error) });
   }
-
-  if (req.method === 'OPTIONS') {
-    return res.status(200).json({});
-  }
-
-  return res.status(405).json({ message: 'Method Not Allowed' });
 }
