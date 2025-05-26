@@ -18,10 +18,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     switch (req.method) {
       case 'POST': {
-        const { apartment, issue, date, completed = false, priority = 'Medium' } = req.body;
+        const { apartment, issue, date = new Date().toISOString(), completed = false, priority = 'Medium' } = req.body;
 
-        if (!apartment || !issue || !date) {
-          return res.status(400).json({ message: 'Apartment, issue, and date are required.' });
+        if (!apartment || !issue) {
+          return res.status(400).json({ message: 'Apartment and issue are required.' });
         }
 
         const normalizedPriority = normalizePriority(priority);
@@ -45,9 +45,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         if (priority) {
-          const p = normalizePriority(priority);
           conditions.push('priority = ?');
-          params.push(p);
+          params.push(normalizePriority(priority));
         }
 
         if (from && typeof from === 'string' && !isNaN(Date.parse(from))) {
@@ -72,16 +71,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           'priority_desc': 'priority DESC'
         };
 
-        if (sort && sortMap[sort as string]) {
-          query += ` ORDER BY ${sortMap[sort as string]}`;
-        }
+        query += ` ORDER BY ${sortMap[sort as string] || 'created_at DESC'}`;
 
         const result = await client.execute({ sql: query, args: params });
         return res.status(200).json(result.rows);
       }
 
       case 'PUT': {
-        const { id, completed, priority, date } = req.body;
+        const { id, apartment, issue, completed, priority, date } = req.body;
 
         if (typeof id !== 'number') {
           return res.status(400).json({ message: 'ID is required and must be a number.' });
@@ -90,24 +87,33 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const updates: string[] = [];
         const params: any[] = [];
 
+        if (typeof apartment === 'string') {
+          updates.push('apartment = ?');
+          params.push(apartment);
+        }
+
+        if (typeof issue === 'string') {
+          updates.push('issue = ?');
+          params.push(issue);
+        }
+
         if (typeof completed === 'boolean') {
           updates.push('completed = ?');
           params.push(completed ? 1 : 0);
         }
 
         if (priority) {
-          const p = normalizePriority(priority);
           updates.push('priority = ?');
-          params.push(p);
+          params.push(normalizePriority(priority));
         }
 
-        if (date) {
+        if (typeof date === 'string' && !isNaN(Date.parse(date))) {
           updates.push('created_at = ?');
           params.push(date);
         }
 
         if (!updates.length) {
-          return res.status(400).json({ message: 'No fields to update.' });
+          return res.status(400).json({ message: 'No valid fields to update.' });
         }
 
         params.push(id);
